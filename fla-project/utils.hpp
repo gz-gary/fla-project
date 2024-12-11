@@ -1,15 +1,11 @@
+#ifndef __UTILS_HPP__
+#define __UTILS_HPP__
+
 #include <string>
+#include <functional>
 
-inline bool prefix_of(const std::string &prefix, const std::string &another) {
-    return (
-        another.length() >= prefix.length()
-        && another.substr(0, prefix.length()) == prefix
-    );
-}
+bool prefix_of(const std::string &prefix, const std::string &another);
+void remove_prefix(const std::string &prefix, std::string &another);
+void parseSetDef(std::string def, std::function<void(const std::string &)> callback);
 
-inline void remove_prefix(const std::string &prefix, std::string &another) {
-    if (prefix_of(prefix, another)) {
-        int len_prefix = prefix.length();
-        another = another.substr(len_prefix, another.length() - len_prefix);
-    }
-}
+#endif

@@ -4,7 +4,6 @@
 #include <set>
 #include <map>
 #include <tuple>
-#include <stack>
 #include <vector>
 #include <string>
 #include <functional>
@@ -12,8 +11,6 @@
 template<typename InputSymbol, typename StateSymbol, typename StackSymbol>
 class PDA {
 private:
-    std::stack<StackSymbol> stack;
-    StateSymbol current_state;
 
     StateSymbol starting_state;
     std::set<StateSymbol> terminating_states;
@@ -25,21 +22,28 @@ private:
 
     std::map<
         std::tuple<StateSymbol, InputSymbol, StackSymbol>,
-        std::tuple<StackSymbol, std::vector<StackSymbol>>
+        std::tuple<StateSymbol, std::vector<StackSymbol>>
     > transitions;
 
     void initializeFromFile(const std::string &path);
     void initializeStateAlphabet(std::string def);
     void initializeInputAlphabet(std::string def);
     void initializeStackAlphabet(std::string def);
-    void parseSetDef(std::string def, std::function<void(const std::string &)> callback);
+    void initializeTerminatingStates(std::string def);
+    void initializeStartingState(std::string def);
+    void initializeStackBottom(std::string def);
+    void initializeTransition(std::string def);
+    void addTransition(
+        std::tuple<StateSymbol, InputSymbol, StackSymbol> key,
+        std::tuple<StateSymbol, std::vector<StackSymbol>> value);
 
 public:
     PDA();
     PDA(const std::string &path);
 
-    void feed(const InputSymbol &input_symbol);
-    void dump();
+    bool accept(const std::string &str);
+    void dumpDefinition();
+    void dumpCurrentState();
 
 };
 
