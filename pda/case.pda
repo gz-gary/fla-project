@@ -1,0 +1,19 @@
+; This is a program checks if the input string is a valid sequence of parentheses
+; in which all ( and ) match with each other
+
+#Q = {on_input,accept}
+
+#S = {(,)}
+
+#G = {x,z}
+
+#q0 = on_input
+
+#z0 = z
+
+#F = {accept}
+
+on_input ( z on_input xz
+on_input ( x on_input xx
+on_input ) x on_input _
+on_input _ z accept _
