@@ -6,7 +6,6 @@
 #include <tuple>
 #include <vector>
 #include <string>
-#include <functional>
 
 template<typename InputSymbol, typename StateSymbol, typename StackSymbol>
 class PDA {
