@@ -57,25 +57,54 @@ bool TM<InputSymbol, StateSymbol, TapeSymbol>::accept(const std::string &str) {
 
     steps = 0;
     current_state = starting_state;
-    for (int i = 0; i < str.length() - 1; ++i) {
-        tape[0].push_back(str[i]);
+    for (int i = 0; i < str.length(); ++i) {
+        tapes[0].push_back(str[i]);
     }
 
+    dumpCurrentState();
     while (true) {
+        if (terminating_states.find(current_state) != terminating_states.end())
+            return true;
         std::vector<TapeSymbol> symb_read;
         for (int i = 0; i < cnt_tapes; ++i) {
             TapeSymbol symb
-                = pointers[i] >= 0 && pointers[i] < tapes[i].size() ? tapes[i][pointers[i]] : '_';
-            symb_read.push_back(i);
+                = pointers[i] >= 0 && pointers[i] < tapes[i].size() ? tapes[i][pointers[i]] : blank_symbol;
+            symb_read.push_back(symb);
         }
         std::tuple<StateSymbol, std::vector<TapeSymbol>> key{current_state, symb_read};
-        auto iter = transition.find(key);
+        auto iter = transitions.find(key);
         if (iter != transitions.end()) {
             auto value = iter->second;
-        }
+            auto next_state = std::get<0>(value);
+            auto symb_write_dir = std::get<1>(value);
+            for (int i = 0; i < cnt_tapes; ++i) {
+                TapeSymbol symb_write = std::get<0>(symb_write_dir[i]);
+                TMDirection dir = std::get<1>(symb_write_dir[i]);
+                if (pointers[i] < 0) {
+                    if (symb_write != blank_symbol) {
+                        int cnt_space = 0 - pointers[i];
+                        for (int j = 0; j < cnt_space; ++j) tapes[i].push_front(blank_symbol);
+                        pointers[i] = 0;
+                    }
+                } else if (pointers[i] >= tapes[i].size()) {
+                    if (symb_write != blank_symbol) {
+                        int cnt_space = pointers[i] - tapes[i].size() + 1;
+                        for (int j = 0; j < cnt_space; ++j) tapes[i].push_back(blank_symbol);
+                        pointers[i] = tapes[i].size() - 1;
+                    }
+                } else {
+                }
+                if (symb_write != blank_symbol) {
+                    tapes[i][pointers[i]] = symb_write;
+                }
+                pointers[i] += dir;
+            }
+            current_state = next_state;
+            ++steps;
+        } else return false;
+        dumpCurrentState();
     }
 
-    return (terminating_states.find(current_state) != terminating_states.end());
 }
 
 template <typename InputSymbol, typename StateSymbol, typename TapeSymbol>
@@ -134,14 +163,14 @@ void TM<InputSymbol, StateSymbol, TapeSymbol>::dumpCurrentState() {
     int prefix_len = 10;
     auto gen_full = [prefix_len](std::string pref) {
         int cnt_space = prefix_len - pref.length() - 1;
-        std::string result{""};
+        std::string result{pref};
         for (int i = 0; i < cnt_space; ++i) result += " ";
         result += ": ";
         return result;
     };
 
-    std::cout << gen_full("Step") << steps;
-    std::cout << gen_full("State") << current_state;
+    std::cout << gen_full("Step") << steps << std::endl;
+    std::cout << gen_full("State") << current_state << std::endl;
     for (int i = 0; i < cnt_tapes; ++i) {
         std::string idx = "Index" + std::to_string(i);
         std::string tpe = "Tape" + std::to_string(i);
@@ -153,7 +182,7 @@ void TM<InputSymbol, StateSymbol, TapeSymbol>::dumpCurrentState() {
             std::cout << std::endl;
             
             std::cout << gen_full(tpe);
-            for (int j = 0; j < cnt_space; ++j) std::cout << "_" << " ";
+            for (int j = 0; j < cnt_space; ++j) std::cout << blank_symbol << " ";
             for (int j = 0; j < tapes[i].size(); ++j) std::cout << tapes[i][j] << " ";
             std::cout << std::endl;
 
@@ -167,7 +196,7 @@ void TM<InputSymbol, StateSymbol, TapeSymbol>::dumpCurrentState() {
             
             std::cout << gen_full(tpe);
             for (int j = 0; j < tapes[i].size(); ++j) std::cout << tapes[i][j] << " ";
-            for (int j = 0; j < cnt_space; ++j) std::cout << "_" << " ";
+            for (int j = 0; j < cnt_space; ++j) std::cout << blank_symbol << " ";
             std::cout << std::endl;
 
             std::cout << gen_full(hd);
@@ -183,10 +212,11 @@ void TM<InputSymbol, StateSymbol, TapeSymbol>::dumpCurrentState() {
             std::cout << std::endl;
 
             std::cout << gen_full(hd);
-            for (int j = 0; j < pointers[i] - 1; ++j) std::cout << " " << " ";
+            for (int j = 0; j < pointers[i]; ++j) std::cout << " " << " ";
             std::cout << "^" << std::endl;
         }
     }
+    std::cout << "-------------------------------" << std::endl;
 }
 
 template <typename InputSymbol, typename StateSymbol, typename TapeSymbol>
