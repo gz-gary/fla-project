@@ -66,6 +66,10 @@ private:
         std::tuple<StateSymbol, std::vector<TapeSymbol>> key,
         std::tuple<StateSymbol, std::vector<std::tuple<TapeSymbol, TMDirection>>> value);
 
+    TapeSymbol readTape(int i) const;
+    void writeTape(int i, TapeSymbol symb_write);
+    void movePointer(int i, const TMDirection &dir);
+
 };
 
 #endif
