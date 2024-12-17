@@ -160,59 +160,68 @@ void TM<InputSymbol, StateSymbol, TapeSymbol>::dumpDefinition()
 
 template <typename InputSymbol, typename StateSymbol, typename TapeSymbol>
 void TM<InputSymbol, StateSymbol, TapeSymbol>::dumpCurrentState() {
-    int prefix_len = 10;
-    auto gen_full = [prefix_len](std::string pref) {
-        int cnt_space = prefix_len - pref.length() - 1;
-        std::string result{pref};
-        for (int i = 0; i < cnt_space; ++i) result += " ";
-        result += ": ";
-        return result;
+    auto gen_info_pref_space = fillUpSpaces(10);
+    auto gen_info_pref = [&gen_info_pref_space](std::string pref) {
+        return gen_info_pref_space(pref) + ": ";
     };
 
-    std::cout << gen_full("Step") << steps << std::endl;
-    std::cout << gen_full("State") << current_state << std::endl;
+    std::cout << gen_info_pref("Step") << steps << std::endl;
+    std::cout << gen_info_pref("State") << current_state << std::endl;
     for (int i = 0; i < cnt_tapes; ++i) {
         std::string idx = "Index" + std::to_string(i);
         std::string tpe = "Tape" + std::to_string(i);
         std::string hd = "Head" + std::to_string(i);
         if (pointers[i] < 0) {
             int cnt_space = 0 - pointers[i];
-            std::cout << gen_full(idx);
-            for (int j = 0; j < tapes[i].size() + cnt_space; ++j) std::cout << j << " ";
+            auto gen_idx_space = fillUpSpaces(digitsLength(tapes[i].size() + cnt_space - 1) + 1);
+            std::cout << gen_info_pref(idx);
+            for (int j = 0; j < tapes[i].size() + cnt_space; ++j)
+                std::cout << gen_idx_space(std::to_string(j));
             std::cout << std::endl;
             
-            std::cout << gen_full(tpe);
-            for (int j = 0; j < cnt_space; ++j) std::cout << blank_symbol << " ";
-            for (int j = 0; j < tapes[i].size(); ++j) std::cout << tapes[i][j] << " ";
+            std::cout << gen_info_pref(tpe);
+            for (int j = 0; j < cnt_space; ++j) 
+                std::cout << gen_idx_space(std::string(1, blank_symbol));
+            for (int j = 0; j < tapes[i].size(); ++j)
+                std::cout << gen_idx_space(std::string(1, tapes[i][j]));
             std::cout << std::endl;
 
-            std::cout << gen_full(hd);
+            std::cout << gen_info_pref(hd);
             std::cout << "^" << std::endl;
         } else if (pointers[i] >= tapes[i].size()) {
             int cnt_space = pointers[i] - tapes[i].size() + 1;
-            std::cout << gen_full(idx);
-            for (int j = 0; j < tapes[i].size() + cnt_space; ++j) std::cout << j << " ";
+            auto gen_idx_space = fillUpSpaces(digitsLength(tapes[i].size() + cnt_space - 1) + 1);
+            std::cout << gen_info_pref(idx);
+            for (int j = 0; j < tapes[i].size() + cnt_space; ++j)
+                std::cout << gen_idx_space(std::to_string(j));
             std::cout << std::endl;
             
-            std::cout << gen_full(tpe);
-            for (int j = 0; j < tapes[i].size(); ++j) std::cout << tapes[i][j] << " ";
-            for (int j = 0; j < cnt_space; ++j) std::cout << blank_symbol << " ";
+            std::cout << gen_info_pref(tpe);
+            for (int j = 0; j < tapes[i].size(); ++j)
+                std::cout << gen_idx_space(std::string(1, tapes[i][j]));
+            for (int j = 0; j < cnt_space; ++j)
+                std::cout << gen_idx_space(std::string(1, blank_symbol));
             std::cout << std::endl;
 
-            std::cout << gen_full(hd);
-            for (int j = 0; j < tapes[i].size() + cnt_space - 1; ++j) std::cout << " " << " ";
+            std::cout << gen_info_pref(hd);
+            for (int j = 0; j < tapes[i].size() + cnt_space - 1; ++j)
+                std::cout << gen_idx_space(" ");
             std::cout << "^" << std::endl;
         } else {
-            std::cout << gen_full(idx);
-            for (int j = 0; j < tapes[i].size(); ++j) std::cout << j << " ";
+            auto gen_idx_space = fillUpSpaces(digitsLength(tapes[i].size()) + 1);
+            std::cout << gen_info_pref(idx);
+            for (int j = 0; j < tapes[i].size(); ++j)
+                std::cout << gen_idx_space(std::to_string(j));
             std::cout << std::endl;
             
-            std::cout << gen_full(tpe);
-            for (int j = 0; j < tapes[i].size(); ++j) std::cout << tapes[i][j] << " ";
+            std::cout << gen_info_pref(tpe);
+            for (int j = 0; j < tapes[i].size(); ++j)
+                std::cout << gen_idx_space(std::string(1, tapes[i][j]));
             std::cout << std::endl;
 
-            std::cout << gen_full(hd);
-            for (int j = 0; j < pointers[i]; ++j) std::cout << " " << " ";
+            std::cout << gen_info_pref(hd);
+            for (int j = 0; j < pointers[i]; ++j)
+                std::cout << gen_idx_space(" ");
             std::cout << "^" << std::endl;
         }
     }

@@ -37,3 +37,20 @@ void parseSetDef(std::string def, std::function<void(const std::string &)> callb
         pos = nxt_pos + 1;
     }
 }
+
+int digitsLength(int x) {
+    if (x <= 0) return 1;
+    else if (x < 10) return 1;
+    else return digitsLength(x / 10) + 1;
+}
+
+std::function<std::string(std::string)> fillUpSpaces(int cnt_total) {
+    return [cnt_total](std::string pref) {
+        int pref_len = pref.length();
+        std::string result{pref};
+        for (int i = 0; i < cnt_total - pref_len; ++i) {
+            result += ' ';
+        }
+        return result;
+    };
+}
