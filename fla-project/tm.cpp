@@ -84,12 +84,14 @@ bool TM<InputSymbol, StateSymbol, TapeSymbol>::accept(const std::string &str) {
             current_state = next_state;
             ++steps;
         } else {
-            /*for (const auto& kvpair : transitions) {
+            bool if_found = false;
+            for (const auto& kvpair : transitions) {
                 auto key = kvpair.first;
                 auto value = kvpair.second;
                 auto this_state = std::get<0>(key);
+                if (this_state != current_state) continue;
                 auto symb_read = std::get<1>(key);
-                auto next_state = std::get<1>(value);
+                auto next_state = std::get<0>(value);
                 auto symb_write_dir = std::get<1>(value);
                 bool if_match = true;
                 for (int i = 0; i < cnt_tapes; ++i) {
@@ -100,9 +102,25 @@ bool TM<InputSymbol, StateSymbol, TapeSymbol>::accept(const std::string &str) {
                     }
                 }
                 if (if_match) {
+                    exit(1);
+                    if_found = true;
+                    for (int i = 0; i < cnt_tapes; ++i) {
+                        TapeSymbol symb = readTape(i);
+                        TapeSymbol symb_write;
+                        TapeSymbol tr_symb_write = std::get<0>(symb_write_dir[i]);
+                        TMDirection dir = std::get<1>(symb_write_dir[i]);
+                        if (symb != '*') symb_write = tr_symb_write;
+                        else {
+                            if (tr_symb_write == '*') symb_write = symb;
+                            else symb_write = tr_symb_write;
+                        }
+                        writeTape(i, symb_write);
+                        movePointer(i, dir);
+                    }
+                    current_state = next_state;
                 }
-            }*/
-            return false;
+            }
+            if (!if_found) return false;
         }
         dumpCurrentState();
     }
