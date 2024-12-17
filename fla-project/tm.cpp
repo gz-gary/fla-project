@@ -96,20 +96,22 @@ bool TM<InputSymbol, StateSymbol, TapeSymbol>::accept(const std::string &str) {
                 bool if_match = true;
                 for (int i = 0; i < cnt_tapes; ++i) {
                     TapeSymbol symb = readTape(i);
-                    if (symb != symb_read[i] && symb_read[i] != '*') {
+                    if (!(
+                        (symb_read[i] == '*' && symb != blank_symbol) ||
+                        (symb_read[i] != '*' && symb == symb_read[i])
+                    )) {
                         if_match = false;
                         break;
                     }
                 }
                 if (if_match) {
-                    exit(1);
                     if_found = true;
                     for (int i = 0; i < cnt_tapes; ++i) {
                         TapeSymbol symb = readTape(i);
                         TapeSymbol symb_write;
                         TapeSymbol tr_symb_write = std::get<0>(symb_write_dir[i]);
                         TMDirection dir = std::get<1>(symb_write_dir[i]);
-                        if (symb != '*') symb_write = tr_symb_write;
+                        if (symb_read[i] != '*') symb_write = tr_symb_write;
                         else {
                             if (tr_symb_write == '*') symb_write = symb;
                             else symb_write = tr_symb_write;
@@ -118,6 +120,8 @@ bool TM<InputSymbol, StateSymbol, TapeSymbol>::accept(const std::string &str) {
                         movePointer(i, dir);
                     }
                     current_state = next_state;
+                    ++steps;
+                    break;
                 }
             }
             if (!if_found) return false;
@@ -252,6 +256,16 @@ void TM<InputSymbol, StateSymbol, TapeSymbol>::dumpCurrentState() {
         }
     }
     std::cout << "-------------------------------" << std::endl;
+}
+
+template <typename InputSymbol, typename StateSymbol, typename TapeSymbol>
+std::string TM<InputSymbol, StateSymbol, TapeSymbol>::getResult() const {
+    std::string result{};
+    for (int i = 0; i < tapes[0].size(); ++i) {
+        if (tapes[0][i] == blank_symbol) result += " ";
+        else result += tapes[0][i];
+    }
+    return result;
 }
 
 template <typename InputSymbol, typename StateSymbol, typename TapeSymbol>

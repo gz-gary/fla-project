@@ -31,6 +31,7 @@ public:
     bool accept(const std::string &str);
     void dumpDefinition();
     void dumpCurrentState();
+    std::string getResult() const;
 
 private:
 

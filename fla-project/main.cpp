@@ -13,7 +13,8 @@ int main(int argc, char* argv[]) {
         // std::cout << (pda.accept(input) ? "true" : "false");
         TM<char, std::string, char> tm{std::string{argv[1]}};
         tm.dumpDefinition();
-        std::cout << (tm.accept(std::string{argv[2]}) ? "true" : "false");
+        tm.accept(std::string{argv[2]});
+        std::cout << tm.getResult();
         return 0;
     }
     cout<<"This is for testing"<<endl;
