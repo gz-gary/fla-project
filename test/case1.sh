@@ -1,0 +1,1 @@
+./bin/fla ./tm/case2.tm $(python -c "for i in range(440): print(1, end='')")
