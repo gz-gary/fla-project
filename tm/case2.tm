@@ -26,6 +26,14 @@
 init ____ __1_ **** copy
 init *___ *_1_ **** copy
 
+; empty input is false
+
+init ____ f___ r*** false0
+false0 ____ a___ r*** false1
+false1 ____ l___ r*** false2
+false2 ____ s___ r*** false3
+false3 ____ e___ r*** halt_accept
+
 ; copy input to last tape
 copy 1_1_ __11 r**l copy
 copy __1_ __1_ ***r cmp
