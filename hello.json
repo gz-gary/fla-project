@@ -1,0 +1,52 @@
+{
+    "Type": "TM Program",
+    "State Alphabet": ["hello0", "hello1", "hello2", "hello3", "hello4", "halt_accept"],
+    "Input Alphabet": [],
+    "Tape Alphabet": ["h", "e", "l", "o", "_"],
+    "Starting State": "hello0",
+    "Terminating States": ["halt_accept"],
+    "Number of Tapes": 2,
+    "Blank Symbol": "_",
+    "Transitions": [
+        {
+            "Type": "Transition tuple",
+            "Current State": "hello0",
+            "Symbol Read": ["*", "_"],
+            "Next State": "hello1",
+            "Symbol Write": ["*", "h"],
+            "Pointer Movement": ["*", "r"]
+        },
+        {
+            "Type": "Transition tuple",
+            "Current State": "hello1",
+            "Symbol Read": ["*", "_"],
+            "Next State": "hello2",
+            "Symbol Write": ["*", "e"],
+            "Pointer Movement": ["*", "r"]
+        },
+        {
+            "Type": "Transition tuple",
+            "Current State": "hello2",
+            "Symbol Read": ["*", "_"],
+            "Next State": "hello3",
+            "Symbol Write": ["*", "l"],
+            "Pointer Movement": ["*", "r"]
+        },
+        {
+            "Type": "Transition tuple",
+            "Current State": "hello3",
+            "Symbol Read": ["*", "_"],
+            "Next State": "hello4",
+            "Symbol Write": ["*", "l"],
+            "Pointer Movement": ["*", "r"]
+        },
+        {
+            "Type": "Transition tuple",
+            "Current State": "hello4",
+            "Symbol Read": ["*", "_"],
+            "Next State": "halt_accept",
+            "Symbol Write": ["*", "o"],
+            "Pointer Movement": ["*", "*"]
+        }
+    ]
+}
