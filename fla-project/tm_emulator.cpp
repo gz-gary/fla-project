@@ -61,8 +61,8 @@ bool TM<InputSymbol, StateSymbol, TapeSymbol>::accept(const std::string &str) {
 
     dumpCurrentState();
     while (true) {
-        if (terminating_states.find(current_state) != terminating_states.end())
-            return true;
+        // if (terminating_states.find(current_state) != terminating_states.end())
+            // return true;
         std::vector<TapeSymbol> symb_read;
         for (int i = 0; i < cnt_tapes; ++i) {
             symb_read.push_back(readTape(i));
