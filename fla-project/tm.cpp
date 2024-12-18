@@ -37,11 +37,11 @@ int& operator+=(int& p, const TMDirection &dir) {
 }
 
 template <typename InputSymbol, typename StateSymbol, typename TapeSymbol>
-TM<InputSymbol, StateSymbol, TapeSymbol>::TM() {
+TM<InputSymbol, StateSymbol, TapeSymbol>::TM() : verbose(false) {
 }
 
 template <typename InputSymbol, typename StateSymbol, typename TapeSymbol>
-TM<InputSymbol, StateSymbol, TapeSymbol>::TM(const std::string &path) {
+TM<InputSymbol, StateSymbol, TapeSymbol>::TM(const std::string &path) : verbose(false) {
     initializeFromFile(path);
 }
 
@@ -134,128 +134,130 @@ bool TM<InputSymbol, StateSymbol, TapeSymbol>::accept(const std::string &str) {
 template <typename InputSymbol, typename StateSymbol, typename TapeSymbol>
 void TM<InputSymbol, StateSymbol, TapeSymbol>::dumpDefinition()
 {
-    std::cout << "States: {";
+    if (!verbose) return;
+    std::cerr << "States: {";
     for (auto state : state_alphabet) {
-        std::cout << state << ",";
+        std::cerr << state << ",";
     }
-    std::cout << "}" << std::endl;
+    std::cerr << "}" << std::endl;
 
-    std::cout << "Input alphabet: {";
+    std::cerr << "Input alphabet: {";
     for (auto input : input_alphabet) {
-        std::cout << input << ",";
+        std::cerr << input << ",";
     }
-    std::cout << "}" << std::endl;
+    std::cerr << "}" << std::endl;
 
-    std::cout << "Tape alphabet: {";
+    std::cerr << "Tape alphabet: {";
     for (auto alpha : tape_alphabet) {
-        std::cout << alpha << ",";
+        std::cerr << alpha << ",";
     }
-    std::cout << "}" << std::endl;
+    std::cerr << "}" << std::endl;
 
-    std::cout << "Terminating states: {";
+    std::cerr << "Terminating states: {";
     for (auto state : terminating_states) {
-        std::cout << state << ",";
+        std::cerr << state << ",";
     }
-    std::cout << "}" << std::endl;
+    std::cerr << "}" << std::endl;
 
-    std::cout << "Starting from: " << starting_state << std::endl;
-    std::cout << "Blank symbol: " << blank_symbol << std::endl;
-    std::cout << "Count of tapes: " << cnt_tapes << std::endl;
+    std::cerr << "Starting from: " << starting_state << std::endl;
+    std::cerr << "Blank symbol: " << blank_symbol << std::endl;
+    std::cerr << "Count of tapes: " << cnt_tapes << std::endl;
 
-    std::cout << "Transitions: " << std::endl;
+    std::cerr << "Transitions: " << std::endl;
     for (auto iter = transitions.begin(); iter != transitions.end(); ++iter) {
         auto key = iter->first;
         auto value = iter->second;
-        std::cout << "("
+        std::cerr << "("
                   << std::get<0>(key) << ", {";
         for (auto v : std::get<1>(key)) {
-            std::cout << v;
+            std::cerr << v;
         }
-        std::cout << "}) ->";
-        std::cout << "("
+        std::cerr << "}) ->";
+        std::cerr << "("
                   << std::get<0>(value) << ", {";
         for (auto v : std::get<1>(value)) {
-            std::cout << "(" << std::get<0>(v) << ",";
-            std::cout << std::get<1>(v) << "), ";
+            std::cerr << "(" << std::get<0>(v) << ",";
+            std::cerr << std::get<1>(v) << "), ";
         }
-        std::cout << "})" << std::endl;
+        std::cerr << "})" << std::endl;
     }
 }
 
 template <typename InputSymbol, typename StateSymbol, typename TapeSymbol>
 void TM<InputSymbol, StateSymbol, TapeSymbol>::dumpCurrentState() {
+    if (!verbose) return;
     auto gen_info_pref_space = fillUpSpaces(10);
     auto gen_info_pref = [&gen_info_pref_space](std::string pref) {
         return gen_info_pref_space(pref) + ": ";
     };
 
-    std::cout << gen_info_pref("Step") << steps << std::endl;
-    std::cout << gen_info_pref("State") << current_state << std::endl;
+    std::cerr << gen_info_pref("Step") << steps << std::endl;
+    std::cerr << gen_info_pref("State") << current_state << std::endl;
     for (int i = 0; i < cnt_tapes; ++i) {
         std::string idx = "Index" + std::to_string(i);
         std::string tpe = "Tape" + std::to_string(i);
         std::string hd = "Head" + std::to_string(i);
         if (tapes[i].empty()) {
-            std::cout << gen_info_pref(idx) << "0" << std::endl;
-            std::cout << gen_info_pref(tpe) << "_" << std::endl;
-            std::cout << gen_info_pref(hd) << "^" << std::endl;
+            std::cerr << gen_info_pref(idx) << "0" << std::endl;
+            std::cerr << gen_info_pref(tpe) << "_" << std::endl;
+            std::cerr << gen_info_pref(hd) << "^" << std::endl;
             continue;
         }
         if (pointers[i] < 0) {
             int cnt_space = 0 - pointers[i];
             auto gen_idx_space = fillUpSpaces(digitsLength(tapes[i].size() + cnt_space - 1) + 1);
-            std::cout << gen_info_pref(idx);
+            std::cerr << gen_info_pref(idx);
             for (int j = 0; j < tapes[i].size() + cnt_space; ++j)
-                std::cout << gen_idx_space(std::to_string(j));
-            std::cout << std::endl;
+                std::cerr << gen_idx_space(std::to_string(j));
+            std::cerr << std::endl;
             
-            std::cout << gen_info_pref(tpe);
+            std::cerr << gen_info_pref(tpe);
             for (int j = 0; j < cnt_space; ++j) 
-                std::cout << gen_idx_space(std::string(1, blank_symbol));
+                std::cerr << gen_idx_space(std::string(1, blank_symbol));
             for (int j = 0; j < tapes[i].size(); ++j)
-                std::cout << gen_idx_space(std::string(1, tapes[i][j]));
-            std::cout << std::endl;
+                std::cerr << gen_idx_space(std::string(1, tapes[i][j]));
+            std::cerr << std::endl;
 
-            std::cout << gen_info_pref(hd);
-            std::cout << "^" << std::endl;
+            std::cerr << gen_info_pref(hd);
+            std::cerr << "^" << std::endl;
         } else if (pointers[i] >= tapes[i].size()) {
             int cnt_space = pointers[i] - tapes[i].size() + 1;
             auto gen_idx_space = fillUpSpaces(digitsLength(tapes[i].size() + cnt_space - 1) + 1);
-            std::cout << gen_info_pref(idx);
+            std::cerr << gen_info_pref(idx);
             for (int j = 0; j < tapes[i].size() + cnt_space; ++j)
-                std::cout << gen_idx_space(std::to_string(j));
-            std::cout << std::endl;
+                std::cerr << gen_idx_space(std::to_string(j));
+            std::cerr << std::endl;
             
-            std::cout << gen_info_pref(tpe);
+            std::cerr << gen_info_pref(tpe);
             for (int j = 0; j < tapes[i].size(); ++j)
-                std::cout << gen_idx_space(std::string(1, tapes[i][j]));
+                std::cerr << gen_idx_space(std::string(1, tapes[i][j]));
             for (int j = 0; j < cnt_space; ++j)
-                std::cout << gen_idx_space(std::string(1, blank_symbol));
-            std::cout << std::endl;
+                std::cerr << gen_idx_space(std::string(1, blank_symbol));
+            std::cerr << std::endl;
 
-            std::cout << gen_info_pref(hd);
+            std::cerr << gen_info_pref(hd);
             for (int j = 0; j < tapes[i].size() + cnt_space - 1; ++j)
-                std::cout << gen_idx_space(" ");
-            std::cout << "^" << std::endl;
+                std::cerr << gen_idx_space(" ");
+            std::cerr << "^" << std::endl;
         } else {
             auto gen_idx_space = fillUpSpaces(digitsLength(tapes[i].size()) + 1);
-            std::cout << gen_info_pref(idx);
+            std::cerr << gen_info_pref(idx);
             for (int j = 0; j < tapes[i].size(); ++j)
-                std::cout << gen_idx_space(std::to_string(j));
-            std::cout << std::endl;
+                std::cerr << gen_idx_space(std::to_string(j));
+            std::cerr << std::endl;
             
-            std::cout << gen_info_pref(tpe);
+            std::cerr << gen_info_pref(tpe);
             for (int j = 0; j < tapes[i].size(); ++j)
-                std::cout << gen_idx_space(std::string(1, tapes[i][j]));
-            std::cout << std::endl;
+                std::cerr << gen_idx_space(std::string(1, tapes[i][j]));
+            std::cerr << std::endl;
 
-            std::cout << gen_info_pref(hd);
+            std::cerr << gen_info_pref(hd);
             for (int j = 0; j < pointers[i]; ++j)
-                std::cout << gen_idx_space(" ");
-            std::cout << "^" << std::endl;
+                std::cerr << gen_idx_space(" ");
+            std::cerr << "^" << std::endl;
         }
     }
-    std::cout << "-------------------------------" << std::endl;
+    std::cerr << "-------------------------------" << std::endl;
 }
 
 template <typename InputSymbol, typename StateSymbol, typename TapeSymbol>

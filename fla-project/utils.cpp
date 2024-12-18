@@ -8,6 +8,13 @@ bool prefix_of(const std::string &prefix, const std::string &another) {
     );
 }
 
+bool suffix_of(const std::string &suffix, const std::string &another) {
+    return (
+        another.length() >= suffix.length()
+        && another.substr(another.length() - suffix.length(), suffix.length()) == suffix
+    );
+}
+
 void remove_prefix(const std::string &prefix, std::string &another) {
     if (prefix_of(prefix, another)) {
         int len_prefix = prefix.length();

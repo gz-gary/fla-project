@@ -28,6 +28,7 @@ public:
     TM();
     TM(const std::string &path);
 
+    bool verbose;
     bool accept(const std::string &str);
     void dumpDefinition();
     void dumpCurrentState();
