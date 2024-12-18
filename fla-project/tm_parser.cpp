@@ -63,7 +63,7 @@ void TM<InputSymbol, StateSymbol, TapeSymbol>::initializeInputAlphabet(std::stri
         def,
         [this](const std::string &state) {
             if (state.length() > 1) 
-                throw std::runtime_error("Input alphabet's length is more than 1");
+                throw std::runtime_error("syntax error");
             input_alphabet.insert(state[0]);
         }
     );
@@ -76,7 +76,7 @@ void TM<InputSymbol, StateSymbol, TapeSymbol>::initializeTapeAlphabet(std::strin
         def,
         [this](const std::string &state) {
             if (state.length() > 1) 
-                throw std::runtime_error("Tape alphabet's length is more than 1");
+                throw std::runtime_error("syntax error");
             tape_alphabet.insert(state[0]);
         }
     );
@@ -97,7 +97,7 @@ template <typename InputSymbol, typename StateSymbol, typename TapeSymbol>
 void TM<InputSymbol, StateSymbol, TapeSymbol>::initializeStartingState(std::string def) {
     remove_prefix("#q0 = ", def);
     if (state_alphabet.find(def) == state_alphabet.end())
-        throw std::runtime_error("Starting state is not in state alphabet");
+        throw std::runtime_error("syntax error");
     starting_state = def;
 }
 
@@ -107,7 +107,7 @@ void TM<InputSymbol, StateSymbol, TapeSymbol>::initializeBlankSymbol(std::string
     if (
         def.length() > 1 || 
         tape_alphabet.find(def[0]) == tape_alphabet.end()
-    ) throw std::runtime_error("Blank symbol is not in tape alphabet");
+    ) throw std::runtime_error("syntax error");
     blank_symbol = def[0];
 }
 
@@ -117,7 +117,7 @@ void TM<InputSymbol, StateSymbol, TapeSymbol>::initializeCntTapes(std::string de
     try {
         cnt_tapes = std::stoi(def);
     } catch (const std::invalid_argument& e) {
-        throw std::runtime_error("Count of tapes is not a valid integer");
+        throw std::runtime_error("syntax error");
     }
 }
 
@@ -133,24 +133,24 @@ void TM<InputSymbol, StateSymbol, TapeSymbol>::initializeTransition(std::string 
     stream >> tr_current_state >> tr_tape_read >> tr_tape_write >> tr_direction >> tr_next_state;
 
     if (state_alphabet.find(tr_current_state) == state_alphabet.end())
-        throw std::runtime_error("Invalid transition with invalid current state");
+        throw std::runtime_error("syntax error");
     if (tr_tape_read.length() == cnt_tapes) {
         for (int i = 0; i < cnt_tapes; ++i)
             if (tr_tape_read[i] != '*' && tape_alphabet.find(tr_tape_read[i]) == tape_alphabet.end())
-                throw std::runtime_error("Invalid transition with invalid tape read");
-    } else throw std::runtime_error("Invalid transition with invalid tape read");
+                throw std::runtime_error("syntax error");
+    } else throw std::runtime_error("syntax error");
     if (tr_tape_write.length() == cnt_tapes) {
         for (int i = 0; i < cnt_tapes; ++i)
             if (tr_tape_write[i] != '*' && tape_alphabet.find(tr_tape_write[i]) == tape_alphabet.end())
-                throw std::runtime_error("Invalid transition with invalid tape write");
-    } else throw std::runtime_error("Invalid transition with invalid tape write");
+                throw std::runtime_error("syntax error");
+    } else throw std::runtime_error("syntax error");
     if (tr_direction.length() == cnt_tapes) {
         for (int i = 0; i < cnt_tapes; ++i)
             if (!TMDirection::isValid(tr_direction[i]))
-                throw std::runtime_error("Invalid transition with invalid direction");
-    } else throw std::runtime_error("Invalid transition with invalid direction");
+                throw std::runtime_error("syntax error");
+    } else throw std::runtime_error("syntax error");
     if (state_alphabet.find(tr_next_state) == state_alphabet.end())
-        throw std::runtime_error("Invalid transition with invalid next state");
+        throw std::runtime_error("syntax error");
 
     std::vector<TapeSymbol> symb_read;
     for (int i = 0; i < cnt_tapes; ++i)

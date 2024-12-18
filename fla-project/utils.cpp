@@ -47,7 +47,7 @@ void parseSetDef(std::string def, std::function<void(const std::string &)> callb
       && def[0] == '{'
       && def[def.length() - 1] == '}'
     )
-    ) throw std::runtime_error("Syntax error on PDA set definition");
+    ) throw std::runtime_error("syntax error");
 
     def = def.substr(1, def.length() - 2);
     size_t pos = 0;

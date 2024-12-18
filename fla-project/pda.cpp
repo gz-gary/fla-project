@@ -59,7 +59,7 @@ void PDA<InputSymbol, StateSymbol, StackSymbol>::initializeInputAlphabet(std::st
         def,
         [this](const std::string &state) {
             if (state.length() > 1) 
-                throw std::runtime_error("Input alphabet's length is more than 1");
+                throw std::runtime_error("syntax error");
             input_alphabet.insert(state[0]);
         }
     );
@@ -72,7 +72,7 @@ void PDA<InputSymbol, StateSymbol, StackSymbol>::initializeStackAlphabet(std::st
         def,
         [this](const std::string &state) {
             if (state.length() > 1) 
-                throw std::runtime_error("Stack alphabet's length is more than 1");
+                throw std::runtime_error("syntax error");
             stack_alphabet.insert(state[0]);
         }
     );
@@ -93,7 +93,7 @@ template <typename InputSymbol, typename StateSymbol, typename StackSymbol>
 void PDA<InputSymbol, StateSymbol, StackSymbol>::initializeStartingState(std::string def) {
     remove_prefix("#q0 = ", def);
     if (state_alphabet.find(def) == state_alphabet.end())
-        throw std::runtime_error("Starting state is not in state alphabet");
+        throw std::runtime_error("syntax error");
     starting_state = def;
 }
 
@@ -101,9 +101,9 @@ template <typename InputSymbol, typename StateSymbol, typename StackSymbol>
 void PDA<InputSymbol, StateSymbol, StackSymbol>::initializeStackBottom(std::string def) {
     remove_prefix("#z0 = ", def);
     if (def.length() > 1)
-        throw std::runtime_error("Stack alphabet's length is more than 1");
+        throw std::runtime_error("syntax error");
     if (stack_alphabet.find(def[0]) == stack_alphabet.end())
-        throw std::runtime_error("Stack bottom is not in stack alphabet");
+        throw std::runtime_error("syntax error");
     stack_bottom = def[0];
 }
 
@@ -119,7 +119,7 @@ void PDA<InputSymbol, StateSymbol, StackSymbol>::initializeTransition(std::strin
     stream >> tr_current_state >> tr_input >> tr_stack_pop >> tr_next_state >> tr_stack_push;
 
     if (state_alphabet.find(tr_current_state) == state_alphabet.end())
-        throw std::runtime_error("Invalid transition with invalid current state");
+        throw std::runtime_error("syntax error");
     if (
         tr_input.length() > 1 ||
         (
@@ -127,21 +127,21 @@ void PDA<InputSymbol, StateSymbol, StackSymbol>::initializeTransition(std::strin
         && tr_input[0] != '_'
         )
     )
-        throw std::runtime_error("Invalid transition with invalid input");
+        throw std::runtime_error("syntax error");
     if (
         tr_stack_pop.length() > 1 ||
         stack_alphabet.find(tr_stack_pop[0]) == stack_alphabet.end()
     )
-        throw std::runtime_error("Invalid transition with invalid stack top");
+        throw std::runtime_error("syntax error");
     if (state_alphabet.find(tr_next_state) == state_alphabet.end())
-        throw std::runtime_error("Invalid transition with invalid next state");
+        throw std::runtime_error("syntax error");
 
     std::tuple<StateSymbol, InputSymbol, StackSymbol> key{tr_current_state, tr_input[0], tr_stack_pop[0]};
     std::vector<StackSymbol> symb_push;
     if (tr_stack_push != "_") {
         for (int i = tr_stack_push.length() - 1; i >= 0; --i) {
             if (stack_alphabet.find(tr_stack_push[i]) == stack_alphabet.end())
-                throw std::runtime_error("Invalid transition with invalid stack push");
+                throw std::runtime_error("syntax error");
             symb_push.push_back(tr_stack_push[i]);
         }
     }
