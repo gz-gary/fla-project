@@ -1,2 +1,1 @@
-./bin/fla ./tm/case1.tm $(python -c "for i in range(30): print('a', end='')
-for j in range(40): print('b', end='')") | wc -m
+./bin/fla ./tm/case2.tm $(python -c "for i in range(440): print(1, end='')")
