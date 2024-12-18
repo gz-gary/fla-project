@@ -15,8 +15,11 @@ void TM<InputSymbol, StateSymbol, TapeSymbol>::initializeFromFile(const std::str
 
     std::string line;
     while (std::getline(file, line)) {
+        remove_surrounding_spaces(line);
+        remove_comment(line);
+        remove_surrounding_spaces(line);
         if (prefix_of(";", line)) {
-            // ignore notation
+            // ignore comment
             continue;
         } else if (prefix_of("#Q = ", line)) {
             initializeStateAlphabet(line);

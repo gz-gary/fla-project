@@ -15,6 +15,20 @@ bool suffix_of(const std::string &suffix, const std::string &another) {
     );
 }
 
+void remove_surrounding_spaces(std::string &str) {
+    while (str.length() > 0 && str[0] == ' ')
+        str = str.substr(1, str.length() - 1);
+    while (str.length() > 0 && str[str.length() - 1] == ' ')
+        str = str.substr(0, str.length() - 1);
+}
+
+void remove_comment(std::string &str) {
+    int pos = str.find(";");
+    if (pos != std::string::npos) {
+        str = str.substr(0, pos);
+    }
+}
+
 int iabs(int x) {
     return x > 0 ? x : -x;
 }
