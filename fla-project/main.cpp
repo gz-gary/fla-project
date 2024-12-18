@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
             return 0;
         }
     } catch (std::runtime_error re) {
-        std::cerr << "Runtime error: " << re.what() << std::endl;
+        std::cerr << re.what() << std::endl;
         return 1;
     }
     assert(0);

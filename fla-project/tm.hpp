@@ -39,6 +39,7 @@ private:
     std::vector<std::deque<TapeSymbol>> tapes;
     int steps;
     std::vector<int> pointers;
+    std::vector<int> leftmostIdx;
     StateSymbol current_state;
 
     StateSymbol starting_state;

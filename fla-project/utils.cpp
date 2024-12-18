@@ -15,6 +15,10 @@ bool suffix_of(const std::string &suffix, const std::string &another) {
     );
 }
 
+int iabs(int x) {
+    return x > 0 ? x : -x;
+}
+
 void remove_prefix(const std::string &prefix, std::string &another) {
     if (prefix_of(prefix, another)) {
         int len_prefix = prefix.length();
